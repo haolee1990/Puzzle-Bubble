@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>60秒挑战趣味冲奶！</title>
+    <link href="css/animate.min.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="css/main.css"  type="text/css" rel="stylesheet" media="all" />
+    <script src="js/lib/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="js/viewPort.js" type="text/javascript"></script>
+
+	<!-- Note: All core EaselJS classes are listed here: -->
+	<script type="text/javascript" src="js/lib/easeljs-NEXT.min.js"></script>
+    <script type="text/javascript" src="js/lib/preloadjs-NEXT.min.js"></script>
+    <script type="text/javascript" src="js/lib/soundjs-NEXT.combined.js"></script>
+    <script type="text/javascript" src="js/lib/tweenjs-NEXT.min.js"></script>
+</head>
+
+<body>
+	<div class="main">
+    	<div class="loading">
+        	<span class="loading_span">Loading 0%</span>
+        </div>     
+        <audio id="bgAudio" preload="auto"  loop="loop" src="music/bg.mp3"></audio>
+        <audio id="hitAudio" preload="auto" src="music/hit.mp3"></audio>
+        <audio id="shootAudio" preload="auto" src="music/shoot.mp3"></audio>
+        
+        <div class="game">
+        	<div class="gameContainer game1" id= "game1">
+            	<canvas id='stage1' width="800" height="960"></canvas>
+            </div> 
+        </div>
+        <div class="score-cont"></div>
+        <div class="score-inner">0</div>
+    </div>
+	<script src="js/game.js" type="text/javascript"></script>
+</body>
+</html>
