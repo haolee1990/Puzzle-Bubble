@@ -1,877 +1,1578 @@
 /**
- *@author Leo
+ *@create by Leo
  *@mail 984018099@qq.com
  *@all right reserved
  * */
 $(function() {
-	function g() {
-		$(".loading").hide(),
-		$("#bgAudio")[0].play();
-		var a = {
-			parent: $("#game1"),
-			stageId: "stage1"
-		};
-		f = new j(a),
-		f.leftGameTime = e,
-		f.gameTime = e,
-		f.start(),
-		d = setInterval(function() {
-			if (e--, f.addBuCount++, f.leftGameTime = e, f.timeTxt.text = e.toString(), 0 == e) {
-				var a = f.addScore - f.decScore;
-				window.localStorage.score = 0 > a ? 0 : a,
-				window.gameOver(),
-				clearInterval(d)
-			}
-		},
-		1e3),
-		createjs.Ticker.setFPS(60)
-	}
-	function k(a) {
-		var b = 100 * (a.loaded / a.total);
-		$(".loading_span").html("Loading " + parseInt(b) + "%")
-	}
-	var a = $(window).height(),
-	b = $(window).width();
+	var winHeight = $(window).height();
+	var winWidth = $(window).width();
 	$(".game canvas").attr({
-		height: a,
-		width: b
+		"height": winHeight,
+		"width": winWidth
 	});
-	var c = [{
-		src: "images/man.png",
-		id: "man"
-	},
-	{
-		src: "images/compressor.png",
-		id: "compressor"
-	},
-	{
-		src: "images/nipple.png",
-		id: "nipple"
-	},
-	{
-		src: "images/leftBottle.png",
-		id: "leftBottle"
-	},
-	{
-		src: "images/rightBottle.png",
-		id: "rightBottle"
-	},
-	{
-		src: "images/overline.png",
-		id: "overline"
-	},
-	{
-		src: "images/a.png",
-		id: "a"
-	},
-	{
-		src: "images/add.png",
-		id: "add"
-	},
-	{
-		src: "images/X.png",
-		id: "X"
-	},
-	{
-		src: "images/pp.png",
-		id: "pp"
-	},
-	{
-		src: "images/bomb.png",
-		id: "bomb"
-	},
-	{
-		src: "images/down1.png",
-		id: "down1"
-	},
-	{
-		src: "images/down2.png",
-		id: "down2"
-	},
-	{
-		src: "images/milk.png",
-		id: "milk"
-	},
-	{
-		src: "images/no.png",
-		id: "no"
-	},
-	{
-		src: "images/nod.png",
-		id: "nod"
-	},
-	{
-		src: "images/down_tips.png",
-		id: "down_tips"
-	},
-	{
-		src: "images/ring.png",
-		id: "ring"
-	}];
+	var manifest = [{
+			src: "images/man.png",
+			id: "man"
+		}, {
+			src: "images/compressor.png",
+			id: "compressor"
+		}, {
+			src: "images/nipple.png",
+			id: "nipple"
+		}, {
+			src: "images/leftBottle.png",
+			id: "leftBottle"
+		}, {
+			src: "images/rightBottle.png",
+			id: "rightBottle"
+		}, {
+			src: "images/overline.png",
+			id: "overline"
+		}, {
+			src: "images/a.png",
+			id: "a"
+		}, {
+			src: "images/add.png",
+			id: "add"
+		}, {
+			src: "images/X.png",
+			id: "X"
+		}, {
+			src: "images/pp.png",
+			id: "pp"
+		}, {
+			src: "images/bomb.png",
+			id: "bomb"
+		}, {
+			src: "images/down1.png",
+			id: "down1"
+		}, {
+			src: "images/down2.png",
+			id: "down2"
+		}, {
+			src: "images/milk.png",
+			id: "milk"
+		}, {
+			src: "images/no.png",
+			id: "no"
+		}, {
+			src: "images/nod.png",
+			id: "nod"
+		}, {
+			src: "images/down_tips.png",
+			id: "down_tips"
+		}
+		//music
+
+		//{src:"images/music/Game-Break.ogg", id:"Game-Break"},
+
+	];
+
 	window.gameOver = function() {
-		window.location.href = "../over.html"
-	},
-	loader = new createjs.LoadQueue(!1),
-	loader.addEventListener("complete", g),
-	loader.addEventListener("progress", k),
-	loader.loadManifest(c),
-	!createjs.Sound.initializeDefaultPlugins();
-	var d, f, e = 60,
-	h = function(a) {
+		window.location.href = '../gameOver.html';
+	}
+
+	//createjs.Sound.alternateExtensions = ["mp3"];
+
+	loader = new createjs.LoadQueue(false);
+	//loader.installPlugin(createjs.Sound);
+	loader.addEventListener("complete", handleComplete);
+	loader.addEventListener("progress", progress);
+
+	loader.loadManifest(manifest);
+	if (!createjs.Sound.initializeDefaultPlugins()) {
+
+	}
+
+	var timer;
+	//设置游戏
+	var gameTime = 60;
+	var game1;
+
+	function handleComplete() {
+		$(".loading").hide();
+
+		//
+		$('#bgAudio')[0].play(); //背景音乐
+
+		//初始化游戏
+		var gameObj1 = {
+			parent: $('#game1'),
+			stageId: 'stage1'
+		}
+		game1 = new Game(gameObj1);
+		game1.leftGameTime = gameTime;
+		game1.gameTime = gameTime;
+		game1.start();
+
+
+		timer = setInterval(function() {
+			gameTime--;
+			game1.addBuCount++;
+			game1.leftGameTime = gameTime;
+
+
+			if (gameTime == 0) {
+
+				window.gameOver();
+
+				clearInterval(timer);
+			}
+		}, 1000)
+
+		//背景音乐
+		//console.log(createjs.Sound.play("music_bg"))
+		//createjs.Sound.play("Game-Break", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
+		//createjs.Sound.play("Game-Break", createjs.Sound.INTERRUPT_NONE, 0, 0, -1, 1);
+		createjs.Ticker.setFPS(60);
+	}
+
+
+	//气泡
+	var Bubble = function(data) {
 		this.data = {
 			x: 0,
 			y: 0,
 			MAP_EL_W: 100,
 			MAP_EL_H: 100,
-			type: -1
-		},
-		$.extend(this.data, a),
-		this.init()
-	};
-	h.prototype = {
+			type: -1,
+		};
+		$.extend(this.data, data);
+
+		this.init();
+	}
+
+	Bubble.prototype = {
 		init: function() {
-			var a = [[0, 1, "pp1", .02], [2, 3, "pp2", .02], [4, 5, "pp3", .02], [6, 6, "X", .008]],
-			b = ["pp1", "pp2", "pp3", "X"]; - 1 == this.data.type && (this.data.type = Math.floor(4 * Math.random()));
-			var c;
-			this.data.isBullet ? (c = new createjs.SpriteSheet({
-				images: [loader.getResult("milk")],
-				frames: {
-					width: 100,
-					height: 100,
-					count: 3,
-					regX: 0,
-					regY: 0
-				},
-				animations: {
-					state1: {
-						frames: [0]
+			var pngArr = [
+				[0, 1, 'pp1', 0.02],
+				[2, 3, 'pp2', 0.02],
+				[4, 5, 'pp3', 0.02],
+				[6, 6, 'X', 0.008]
+			];
+			var aniName = ['pp1', 'pp2', 'pp3', 'X'];
+			if (this.data.type == -1) { //因为有可能是0，所以不能用boolean判断
+				this.data.type = Math.floor(Math.random() * 4);
+			}
+
+			var spriteSheet;
+			var sprite;
+			if (this.data.isBullet) {
+				spriteSheet = new createjs.SpriteSheet({
+					'images': [loader.getResult('milk')],
+					'frames': {
+						'width': 100,
+						'height': 100,
+						'count': 3,
+						'regX': 0,
+						'regY': 0
 					},
-					state2: {
-						frames: [1]
-					},
-					state3: {
-						frames: [2]
+					'animations': {
+						'state1': {
+							frames: [0]
+						},
+						'state2': {
+							frames: [1]
+						},
+						'state3': {
+							frames: [2]
+						},
 					}
-				}
-			}), this.sprite = new createjs.Sprite(c, "state" + (this.data.type + 1))) : (c = new createjs.SpriteSheet({
-				images: [loader.getResult("pp"), loader.getResult("X"), loader.getResult("bomb")],
-				frames: [[0, 0, 100, 100, 0], [100, 0, 100, 100, 0], [200, 0, 100, 100, 0], [300, 0, 100, 100, 0], [400, 0, 100, 100, 0], [500, 0, 100, 100, 0], [0, 0, 100, 100, 1], [0, 0, 116, 93, 2, 0, 0], [116, 0, 116, 93, 2, 0, 0], [232, 0, 116, 93, 2, 0, 0], [348, 0, 116, 93, 2, 0, 0], [348, 0, 116, 93, 2, 0, 0]],
-				animations: {
-					pp1: a[0],
-					pp2: a[1],
-					pp3: a[2],
-					X: a[3],
-					bomb: [7, 11, "bomb", .1]
-				}
-			}), this.sprite = new createjs.Sprite(c, b[this.data.type])),
-			this.el = this.sprite,
-			this.el.x = this.get("x"),
-			this.el.y = this.get("y")
+				})
+				this.sprite = new createjs.Sprite(spriteSheet, 'state' + (this.data.type + 1));
+			} else {
+				spriteSheet = new createjs.SpriteSheet({
+					'images': [loader.getResult('pp'), loader.getResult('X'), loader.getResult('bomb')], //,
+					//"frames": {"width": 100, "height": 100, "count": 7, "regX": 0,"regY": 0 },
+					//'frames':[[0,0,100,100,0,0,0],[100,0,100,100,1,]], //[0,0,234,194,7] //,[0,0,100,100,6]
+					'frames': [
+						[0, 0, 100, 100, 0, ],
+						[100, 0, 100, 100, 0],
+						[200, 0, 100, 100, 0],
+						[300, 0, 100, 100, 0],
+						[400, 0, 100, 100, 0],
+						[500, 0, 100, 100, 0],
+						[0, 0, 100, 100, 1], //第二张图片
+						[0, 0, 116, 93, 2, 0, 0], //第三张图片
+						[116, 0, 116, 93, 2, 0, 0],
+						[232, 0, 116, 93, 2, 0, 0],
+						[348, 0, 116, 93, 2, 0, 0],
+						[348, 0, 116, 93, 2, 0, 0]
+					],
+					'animations': {
+						'pp1': pngArr[0],
+						'pp2': pngArr[1],
+						'pp3': pngArr[2],
+						'X': pngArr[3],
+						'bomb': [7, 11, 'bomb', 0.1], //爆炸动画坐标设置在中间，要注意这一点
+						/*'ppX':{frames:[6,6,false,0.5]},
+						'bomb':{frames:[7,9,false,0.5]},*/
+					}
+				});
+				this.sprite = new createjs.Sprite(spriteSheet, aniName[this.data.type]); //aniName[this.data.type]
+			}
+			this.el = this.sprite;
+			this.el.x = this.get('x');
+			this.el.y = this.get('y');
+
+			/*var bombSheet  =  new createjs.SpriteSheet({
+				'images':[loader.getResult('bomb')],//,loader.getResult('bomb')
+				"frames": {"width": 100, "height": 100, "count": 7, "regX": 0,"regY": 0 },
+				'frames':[[0,0,100,100,0,0,0],[100,0,100,100,1,]], //[0,0,234,194,7] //,[0,0,100,100,6]
+				'animations':{
+						'pp1':[0,1,'pp1',0.02],
+						'pp2':[2,3,'pp2',0.04],
+						'pp3':[4,5,'pp3',0.008],
+						'X':[7,7,'X',0.008]
+					}
+			});
+			this.sprite = new createjs.Sprite(spriteSheet,aniName[this.data.type]);
+			this.el = this.sprite;
+			this.el.x = this.get('x');
+			this.el.y = this.get('y');*/
+
+
 		},
 		getSuroundPosition: function() {
-			var a = this.get("x"),
-			b = this.get("y"),
-			c = [a - 50, b - 90],
-			d = [a + 50, b - 90],
-			e = [a + 100, b],
-			f = [a + 50, b + 90],
-			g = [a - 50, b + 90],
-			h = [a - 100, b],
-			i = [c, d, e, f, g, h];
-			return i
+			var X = this.get('x');
+			var Y = this.get('y');
+			var arr0 = [X - 50, Y - 90];
+			var arr1 = [X + 50, Y - 90];
+			var arr2 = [X + 100, Y];
+			var arr3 = [X + 50, Y + 90];
+			var arr4 = [X - 50, Y + 90];
+			var arr5 = [X - 100, Y];
+			var arr = [arr0, arr1, arr2, arr3, arr4, arr5];
+			return arr;
+
 		},
-		getDistance: function(a) {
-			var b = a[0] - this.get("x"),
-			c = a[1] - this.get("y"),
-			d = Math.sqrt(b * b + c * c);
-			return d
+
+		//获取距离
+		getDistance: function(arr) {
+			var dx = arr[0] - this.get('x');
+			var dy = arr[1] - this.get('y');
+			var dis = Math.sqrt(dx * dx + dy * dy);
+			return dis;
 		},
+
 		clone: function() {
-			var a = new h(this.data);
-			return a.el.x = a.data.x = this.el.x,
-			a.el.y = a.data.y = this.el.y,
-			a
+			var bubble = new Bubble(this.data);
+			bubble.el.x = bubble.data.x = this.el.x;
+			bubble.el.y = bubble.data.y = this.el.y;
+			return bubble;
+
 		},
-		get: function(a) {
-			return this.data[a]
+		get: function(pro) {
+			return this.data[pro];
 		},
-		set: function(a, b) {
-			this.data[a] = b,
-			this.el.x = this.get("x"),
-			this.el.y = this.get("y")
+		set: function(pro, value) {
+			this.data[pro] = value;
+			this.el.x = this.get('x');
+			this.el.y = this.get('y');
 		},
 		getAroundBub: function() {
-			var a = this.data,
-			b = a.row,
-			c = a.col,
-			d = a.TOTALCOL,
-			e = this.data.bubbleArray,
-			f = [];
-			return f = 0 == a.row % 2 ? 0 == a.row ? 0 == a.col ? [e[b][c + 1], e[b + 1][c]] : a.col == d - 1 ? [e[b + 1][c - 1], e[b][c - 1]] : [e[b][c + 1], e[b + 1][c], e[b + 1][c - 1], e[b][c - 1]] : 0 == a.col ? [e[b - 1][c], e[b][c + 1], e[b + 1][c]] : a.col == d - 1 ? [e[b - 1][c - 1], e[b + 1][c - 1], e[b][c - 1]] : [e[b - 1][c - 1], e[b - 1][c], e[b][c + 1], e[b + 1][c], e[b + 1][c - 1], e[b][c - 1]] : 0 == a.col ? [e[b - 1][c], e[b - 1][c + 1], e[b][c + 1], e[b + 1][c + 1], e[b + 1][c]] : a.col == d - 2 ? [e[b - 1][c], e[b - 1][c + 1], e[b + 1][c + 1], e[b + 1][c], e[b][c - 1]] : [e[b - 1][c], e[b - 1][c + 1], e[b][c + 1], e[b + 1][c + 1], e[b + 1][c], e[b][c - 1]]
+			var obj = this.data;
+			var row = obj.row;
+			var col = obj.col;
+			var TOTALCOL = obj.TOTALCOL;
+
+			var bubbleArray = this.data.bubbleArray;
+			var arr = [];
+			if (obj.row % 2 == 0) { //偶行
+
+				if (obj.row == 0) { //第一行
+					if (obj.col == 0) //第一列
+					{
+						arr = [bubbleArray[row][col + 1], bubbleArray[row + 1][col]];
+					} else if (obj.col == TOTALCOL - 1) {
+						arr = [bubbleArray[row + 1][col - 1], bubbleArray[row][col - 1]];
+					} else {
+						arr = [bubbleArray[row][col + 1], bubbleArray[row + 1][col], bubbleArray[row + 1][col - 1], bubbleArray[row][col - 1]];
+					}
+				} else {
+					if (obj.col == 0) //第一列
+					{
+						arr = [bubbleArray[row - 1][col], bubbleArray[row][col + 1], bubbleArray[row + 1][col]];
+					} else if (obj.col == TOTALCOL - 1) {
+
+						arr = [bubbleArray[row - 1][col - 1], bubbleArray[row + 1][col - 1], bubbleArray[row][col - 1]];
+					} else {
+
+						arr = [bubbleArray[row - 1][col - 1], bubbleArray[row - 1][col], bubbleArray[row][col + 1], bubbleArray[row + 1][col], bubbleArray[row + 1][col - 1], bubbleArray[row][col - 1]];
+
+					}
+				}
+			} else {
+				if (obj.col == 0) {
+					arr = [bubbleArray[row - 1][col], bubbleArray[row - 1][col + 1], bubbleArray[row][col + 1], bubbleArray[row + 1][col + 1], bubbleArray[row + 1][col]];
+				} else if (obj.col == TOTALCOL - 2) {
+					arr = [bubbleArray[row - 1][col], bubbleArray[row - 1][col + 1], bubbleArray[row + 1][col + 1], bubbleArray[row + 1][col], bubbleArray[row][col - 1]];
+				} else {
+					arr = [bubbleArray[row - 1][col], bubbleArray[row - 1][col + 1], bubbleArray[row][col + 1], bubbleArray[row + 1][col + 1], bubbleArray[row + 1][col], bubbleArray[row][col - 1]];
+
+				}
+			}
+			return arr;
 		},
 		getAroundBubPos: function() {
-			var a = this.data,
-			b = a.row,
-			c = a.col,
-			d = a.TOTALCOL;
-			this.data.bubbleArray;
-			var f = [];
-			return f = 0 == b % 2 ? 0 == b ? 0 == c ? [[b, c + 1], [b + 1, c]] : c == d - 1 ? [[b + 1, c - 1], [b, c - 1]] : [[b, c + 1], [b + 1, c], [b + 1, c - 1], [b, c - 1]] : 0 == c ? [[b - 1, c], [b, c + 1], [b + 1, c]] : c == d - 1 ? [[b - 1, c - 1], [b + 1, c - 1], [b, c - 1]] : [[b - 1, c - 1], [b - 1, c], [b, c + 1], [b + 1, c], [b + 1, c - 1], [b, c - 1]] : 0 == c ? [[b - 1, c], [b - 1, c + 1], [b, c + 1], [b + 1, c + 1], [b + 1, c]] : c == d - 2 ? [[b - 1, c], [b - 1, c + 1], [b + 1, c + 1], [b + 1, c], [b, c - 1]] : [[b - 1, c], [b - 1, c + 1], [b, c + 1], [b + 1, c + 1], [b + 1, c], [b, c - 1]]
+			var obj = this.data;
+			var row = obj.row;
+			var col = obj.col;
+			var TOTALCOL = obj.TOTALCOL;
+
+			var bubbleArray = this.data.bubbleArray;
+			var arrRC = [];
+			if (row % 2 == 0) { //偶行
+
+				if (row == 0) { //第一行
+					if (col == 0) //第一列
+					{
+						arrRC = [
+							[row, col + 1],
+							[row + 1, col]
+						]
+					} else if (col == TOTALCOL - 1) {
+						arrRC = [
+							[row + 1, col - 1],
+							[row, col - 1]
+						]
+					} else {
+						arrRC = [
+							[row, col + 1],
+							[row + 1, col],
+							[row + 1, col - 1],
+							[row, col - 1]
+						];
+					}
+				} else {
+					if (col == 0) //第一列
+					{
+						arrRC = [
+							[row - 1, col],
+							[row, col + 1],
+							[row + 1, col]
+						];
+					} else if (col == TOTALCOL - 1) {
+						arrRC = [
+							[row - 1, col - 1],
+							[row + 1, col - 1],
+							[row, col - 1]
+						];
+					} else {
+						arrRC = [
+							[row - 1, col - 1],
+							[row - 1, col],
+							[row, col + 1],
+							[row + 1, col],
+							[row + 1, col - 1],
+							[row, col - 1]
+						];
+					}
+				}
+			} else {
+				if (col == 0) {
+
+					arrRC = [
+						[row - 1, col],
+						[row - 1, col + 1],
+						[row, col + 1],
+						[row + 1, col + 1],
+						[row + 1, col]
+					];
+				} else if (col == TOTALCOL - 2) {
+					arrRC = [
+						[row - 1, col],
+						[row - 1, col + 1],
+						[row + 1, col + 1],
+						[row + 1, col],
+						[row, col - 1]
+					];
+				} else {
+					arrRC = [
+						[row - 1, col],
+						[row - 1, col + 1],
+						[row, col + 1],
+						[row + 1, col + 1],
+						[row + 1, col],
+						[row, col - 1]
+					];
+				}
+			}
+			return arrRC;
 		}
-	};
-	var j = function(c) {
-		this.stageW = b,
-		this.stageH = a,
-		this.p = c.parent,
-		this.stageId = c.stageId,
-		this.leftTime = 0,
-		this.gameTime = 0,
-		this.decScore = 0,
-		this.addScore = 0,
-		this.el = {},
-		this.bubbleW = 100,
-		this.bubbleH = 100,
-		this.bubbleV = 25,
-		this.gameTime = 0,
-		this.ball_cols = 13,
-		this.bubbleAnim = !1,
-		this.stoneEnable = !1,
-		this.stoneOdds = .1,
+
+	}
+
+
+	var Game = function(obj) {
+		this.stageW = winWidth;
+		this.stageH = winHeight;
+
+		this.p = obj.parent;
+		this.stageId = obj.stageId;
+
+		this.leftTime = 0; //游戏剩余时间
+		this.gameTime = 0;
+
+		this.decScore = 0; //减分
+		this.addScore = 0;
+
+		this.el = {};
+		this.bubbleW = 100;
+		this.bubbleH = 100;
+		this.bubbleV = 25;
+		//this.bubbleList = [];
+		//this.compressorOffset = 0;
+		//this.compressorV = 15;
+		//this.compressorIdx = 0;
+		//this.compressorD = 10;
+		this.gameTime = 0;
+		this.ball_cols = 13;
+		this.bubbleAnim = !1;
+		this.stoneEnable = !1;
+		this.stoneOdds = .1;
 		this.stone_max = 5,
-		this.stone_cur = 0,
-		this._pause = !1,
-		this.bubbleToDisappear = [],
-		this.lenArra = [],
-		this._vx = 0,
-		this._vy = 0,
-		this.row = 0,
-		this.col = 0,
-		this.core_r,
-		this.core_c,
-		this.initX = 0,
-		this.initY = 0,
-		this.shoot = !1,
-		this.ROW = 3,
-		this.RADIUS = 100,
-		this.MAP_UNIT = 100,
-		this.MAP_EL_W = 100,
-		this.MAP_EL_H = 90,
-		this.TOTALROW = 15,
-		this.TOTALCOL = 8,
-		this.sameBubbleTotal = [],
-		this.dropArr = [],
-		this.temDropArr = [],
-		this.dropLenArr = [],
-		this.bubbleArray = [],
-		this.score = 0,
-		this.aniCount = 0,
-		this.addEnterFrame = !1,
-		this.bulletArr = [],
-		this.addBuCount = 0,
-		this.init()
-	};
-	j.prototype = {
+			this.stone_cur = 0,
+			this._pause = !1;
+		this.bubbleToDisappear = [];
+
+		this.lenArra = []; //递归标尺
+
+		this._vx = 0;
+		this._vy = 0;
+
+		this.row = 0; //碰撞球位置
+		this.col = 0; //碰撞球位置
+
+		this.core_r; //搜索网络的起始球的row
+		this.core_c; //搜索网络的起始球的col
+
+		this.initX = 0; //子弹的初始位置，会在game中实例化
+		this.initY = 0; //子弹的初始位置，会在game中实例化
+
+		this.shoot = false;
+
+		this.ROW = 3; //初始球的row
+		this.RADIUS = 100; //球
+		this.MAP_UNIT = 100; //地图元素尺
+		this.MAP_EL_W = 100; //地图元素尺寸宽
+		this.MAP_EL_H = 90; //地图元素尺寸高
+		this.TOTALROW = 15; //总行数
+		this.TOTALCOL = 8; //总列数
+
+		this.sameBubbleTotal = []; //相同颜色的数组
+
+		this.dropArr = []; //放置待消除的数组
+		this.temDropArr = []; //临时放置待消除的数组
+		this.dropLenArr = [];
+
+		this.bubbleArray = [];
+
+		this.score = 0;
+		this.aniCount = 0;
+
+		this.addEnterFrame = false;
+
+		this.bulletArr = [];
+
+		this.addBuCount = 0; //每隔几秒加小球
+
+		var _this = this;
+		this.init();
+	}
+
+
+	Game.prototype = {
 		init: function() {
-			var a = document.getElementById(this.stageId);
-			this.el.canvas = a,
-			this.stage = new createjs.Stage(a),
+
+			var canvas = document.getElementById(this.stageId);
+			this.el.canvas = canvas;
+			this.stage = new createjs.Stage(canvas);
+
 			createjs.Touch.enable(this.stage, !0);
-			var b = this;
-			this.addEnterFrame || createjs.Ticker.addEventListener("tick",
-			function() {
-				b.tick()
-			})
+			var _this = this;
+			if (!this.addEnterFrame) {
+				createjs.Ticker.addEventListener("tick", function() {
+					_this.tick();
+				});
+			}
+			//createjs.Touch.enable(this.stage, !0);
 		},
 		createEls: function() {
-			this.bgShape = new createjs.Shape,
-			this.bgShape.graphics.beginFill("#1b4e83").drawRect(74, 0, b, a),
-			this.stage.addChild(this.bgShape),
-			this.barBg = new createjs.Shape,
-			this.barBg.graphics.beginFill("#00a0e9").drawRect(97, 24, 500, 18),
-			this.barBg.visible = !1,
-			this.stage.addChild(this.barBg),
-			this.bar = new createjs.Shape,
-			this.bar.graphics.beginFill("#fff").drawRect(97, 24, 500, 18),
-			this.bar.visible = !1,
-			this.stage.addChild(this.bar),
-			this.overline = new createjs.Bitmap(loader.getResult("overline")),
-			this.overline.x = 0,
-			this.overline.y = a - 336,
-			this.overline.setTransform(0, a - 336, 1.35, 1),
-			this.stage.addChild(this.overline),
-			this.leftBottle = new createjs.Bitmap(loader.getResult("leftBottle")),
-			this.leftBottle.x = 30,
-			this.leftBottle.y = a - 270,
-			this.stage.addChild(this.leftBottle),
-			this.leftNo = new createjs.Bitmap(loader.getResult("no")),
-			this.leftNo.x = 70,
-			this.leftNo.y = a - 180,
-			this.leftNod = new createjs.Bitmap(loader.getResult("nod")),
-			this.leftNod.x = 45,
-			this.leftNod.y = a - 115,
-			this.leftNod.alpha = 0,
-			this.stage.addChild(this.leftNo),
-			this.stage.addChild(this.leftNod),
-			this.ringIcon = new createjs.Bitmap(loader.getResult("ring")),
-			this.ringIcon.x = 90,
-			this.ringIcon.y = 25,
-			this.stage.addChild(this.ringIcon);
-			var c = new createjs.SpriteSheet({
-				images: [loader.getResult("down1"), loader.getResult("down2")],
-				frames: [[0, 0, 52, 110, 0, 26, 110], [0, 0, 42, 174, 1, 21, 174]],
-				animations: {
-					down1: {
+			//背景
+			this.bgShape = new createjs.Shape();
+			this.bgShape.graphics.beginFill("#1b4e83").drawRect(74, 0, winWidth, winHeight);
+			this.stage.addChild(this.bgShape);
+
+			//进度条
+			this.barBg = new createjs.Shape();
+			this.barBg.graphics.beginFill("#00a0e9").drawRect(97, 24, 500, 18);
+			this.stage.addChild(this.barBg);
+
+			this.bar = new createjs.Shape();
+			this.bar.graphics.beginFill("#fff").drawRect(97, 24, 500, 18);
+			this.stage.addChild(this.bar);
+
+
+
+			//overline
+			this.overline = new createjs.Bitmap(loader.getResult("overline"));
+			this.overline.x = 0;
+			this.overline.y = winHeight - 336;
+			this.overline.setTransform(0, winHeight - 336, 1.35, 1);
+			this.stage.addChild(this.overline);
+
+			//左边瓶子
+			this.leftBottle = new createjs.Bitmap(loader.getResult("leftBottle"));
+			this.leftBottle.x = 30;
+			this.leftBottle.y = winHeight - 270;
+			this.stage.addChild(this.leftBottle);
+			//左边瓶子提示
+			this.leftNo = new createjs.Bitmap(loader.getResult("no"));
+			this.leftNo.x = 70;
+			this.leftNo.y = winHeight - 180;
+
+			this.leftNod = new createjs.Bitmap(loader.getResult("nod"));
+			this.leftNod.x = 45;
+			this.leftNod.y = winHeight - 115;
+			this.leftNod.alpha = 0;
+			this.stage.addChild(this.leftNo);
+			this.stage.addChild(this.leftNod);
+			//ani
+			//this.addAni = new createjs.Bitmap(loader.getResult("leftBottle"));
+			var aniSpriteSheet = new createjs.SpriteSheet({
+				'images': [loader.getResult('down1'), loader.getResult('down2')], //,
+				'frames': [
+					[0, 0, 52, 110, 0, 26, 110],
+					[0, 0, 42, 174, 1, 21, 174],
+				],
+				'animations': {
+					'down1': {
 						frames: [0],
-						next: "down1",
-						speed: .05
+						next: 'down1',
+						speed: 0.05
 					},
-					down2: {
+					'down2': {
 						frames: [1],
-						next: "down2",
-						speed: .05
-					}
+						next: 'down2',
+						speed: 0.05
+					},
 				}
 			});
-			this.downSprite = new createjs.Sprite(c, "down2"),
-			this.downSprite.x = 685,
-			this.downSprite.y = a - 756,
-			this.downSprite.visible = !1,
+			this.downSprite = new createjs.Sprite(aniSpriteSheet, 'down2'); //aniName[this.data.type]
+			this.downSprite.x = 685;
+			this.downSprite.y = winHeight - 756;
+			this.downSprite.visible = false;
 			this.stage.addChild(this.downSprite);
-			var d = new createjs.SpriteSheet({
-				images: [loader.getResult("X")],
-				frames: [[0, 0, 100, 100, 0, 26, 110]],
-				animations: {
-					down3: {
+			//右边的x掉落
+			var aniSpriteSheet2 = new createjs.SpriteSheet({
+				'images': [loader.getResult('X')], //,
+				'frames': [
+					[0, 0, 100, 100, 0, 26, 110],
+				],
+				'animations': {
+					'down3': {
 						frames: [0],
-						next: "down3",
-						speed: .05
-					}
+						next: 'down3',
+						speed: 0.05
+					},
 				}
 			});
-			this.downSprite2 = new createjs.Sprite(d, "down3"),
-			this.downSprite2.x = 95,
-			this.downSprite2.y = a - 756,
-			this.downSprite2.visible = !1,
+			this.downSprite2 = new createjs.Sprite(aniSpriteSheet2, 'down3'); //aniName[this.data.type]
+			this.downSprite2.x = 95;
+			this.downSprite2.y = winHeight - 756;
+			this.downSprite2.visible = false;
 			this.stage.addChild(this.downSprite2);
-			var e = new createjs.SpriteSheet({
-				images: [loader.getResult("rightBottle")],
-				frames: {
-					width: 152,
-					height: 260,
-					count: 4,
-					regX: 72,
-					regY: 0
+
+			//右边瓶子
+			//man
+			var rightBottleSheet = new createjs.SpriteSheet({
+				'images': [loader.getResult('rightBottle')],
+				'frames': {
+					'width': 152,
+					'height': 260,
+					'count': 4,
+					'regX': 72,
+					'regY': 0
 				},
-				animations: {
-					state1: {
+				'animations': {
+					'state1': {
 						frames: [0]
 					},
-					state2: {
+					'state2': {
 						frames: [1]
 					},
-					state3: {
+					'state3': {
 						frames: [2]
 					},
-					state4: {
+					'state4': {
 						frames: [3]
-					}
+					},
 				}
 			});
-			this.rightBottle = new createjs.Sprite(e, "state1"),
-			this.rightBottle.x = 680,
-			this.rightBottle.y = a - 270,
+			this.rightBottle = new createjs.Sprite(rightBottleSheet, "state1");
+			this.rightBottle.x = 680;
+			this.rightBottle.y = winHeight - 270;
 			this.stage.addChild(this.rightBottle);
-			var f = new createjs.Bitmap(loader.getResult("nipple")),
-			g = f.getBounds();
-			f.x = -g.width / 2,
-			f.y = -g.height,
-			this.nippleCon = new createjs.Container,
-			this.nippleCon.x = 300,
-			this.nippleCon.y = a - 186,
-			this.nippleCon.rotation = 13,
-			this.nippleCon.addChild(f),
+
+			//奶嘴
+			var nipple = new createjs.Bitmap(loader.getResult("nipple"));
+			var nippleBounds = nipple.getBounds();
+			nipple.x = -nippleBounds.width / 2;
+			nipple.y = -nippleBounds.height;
+
+			this.nippleCon = new createjs.Container();
+			this.nippleCon.x = 300;
+			this.nippleCon.y = winHeight - 186;
+			this.nippleCon.rotation = 13; //要加13度对是正中间
+			//nipple.setTransform  (0,0,this.stageW/613,0.2);
+			this.nippleCon.addChild(nipple);
 			this.stage.addChild(this.nippleCon);
-			var h = new createjs.SpriteSheet({
-				images: [loader.getResult("man")],
-				frames: {
-					width: 245,
-					height: 330,
-					count: 3,
-					regX: 132,
-					regY: 330
+
+			//man
+			var manSpriteSheet = new createjs.SpriteSheet({
+				'images': [loader.getResult('man')],
+				'frames': {
+					'width': 245,
+					'height': 330,
+					'count': 3,
+					'regX': 132,
+					'regY': 330
 				},
-				animations: {
-					state1: {
+				'animations': {
+					'state1': {
 						frames: [0],
-						next: "state2",
-						speed: .05
+						next: 'state2',
+						speed: 0.05
 					},
-					state2: {
+					'state2': {
 						frames: [1],
-						next: "state2",
-						speed: .05
+						next: 'state2',
+						speed: 0.05
 					},
-					state3: {
+					'state3': {
 						frames: [2],
-						next: "state2",
-						speed: .05
-					}
+						next: 'state2',
+						speed: 0.05
+					},
 				}
 			});
-			this.manSprite = new createjs.Sprite(h, "state2"),
-			this.manSprite.x = 450,
-			this.manSprite.y = a - 20,
+			this.manSprite = new createjs.Sprite(manSpriteSheet, "state2");
+			this.manSprite.x = 450;
+			this.manSprite.y = winHeight - 20;
 			this.stage.addChild(this.manSprite);
-			var i = new createjs.SpriteSheet({
-				images: [loader.getResult("down_tips")],
-				frames: {
-					width: 44,
-					height: 150,
-					count: 3,
-					regX: 0,
-					regY: 0
+			//右边文字提示
+			var tipsSpriteSheet = new createjs.SpriteSheet({
+				'images': [loader.getResult('down_tips')],
+				'frames': {
+					'width': 44,
+					'height': 150,
+					'count': 3,
+					'regX': 0,
+					'regY': 0
 				},
-				animations: {
-					state1: {
+				'animations': {
+					'state1': {
 						frames: [0],
-						next: "state1",
-						speed: .3
+						next: 'state1',
+						speed: 0.05
 					},
-					state2: {
+					'state2': {
 						frames: [1],
-						next: "state2",
-						speed: .3
+						next: 'state2',
+						speed: 0.05
 					},
-					state3: {
+					'state3': {
 						frames: [2],
-						next: "state3",
-						speed: .3
-					}
+						next: 'state3',
+						speed: 0.05
+					},
 				}
 			});
-			this.tipsSprite = new createjs.Sprite(i, "state1"),
-			this.tipsSprite.x = 650,
-			this.tipsSprite.scaleX = 1.5,
-			this.tipsSprite.scaleY = 1.5,
-			this.tipsSprite.visible = !1,
-			this.tipsSprite.y = a - 600,
+			this.tipsSprite = new createjs.Sprite(tipsSpriteSheet, "state1");
+			this.tipsSprite.x = 650;
+			this.tipsSprite.scaleX = 1.5;
+			this.tipsSprite.scaleY = 1.5;
+			this.tipsSprite.visible = false;
+			this.tipsSprite.y = winHeight - 600;
 			this.stage.addChild(this.tipsSprite);
-			var j = new createjs.Bitmap(loader.getResult("a")),
-			k = j.getBounds();
-			j.x = -k.width / 2,
-			j.y = -k.height / 2,
-			this.dec = new createjs.Container,
-			this.dec.x = 175,
-			this.dec.y = a - 51,
-			this.dec.addChild(j),
+			//-
+			var decBitmap = new createjs.Bitmap(loader.getResult("a"));
+			var decBitmapBounds = decBitmap.getBounds();
+			decBitmap.x = -decBitmapBounds.width / 2;
+			decBitmap.y = -decBitmapBounds.height / 2;
+			this.dec = new createjs.Container();
+			this.dec.x = 175;
+			this.dec.y = winHeight - 51;
+			this.dec.addChild(decBitmap);
 			this.stage.addChild(this.dec);
-			var l = new createjs.Bitmap(loader.getResult("add")),
-			m = l.getBounds();
-			l.x = -m.width / 2,
-			l.y = -m.height / 2,
-			this.add = new createjs.Container,
-			this.add.x = 620,
-			this.add.y = a - 51,
-			this.add.addChild(l),
-			this.stage.addChild(this.add),
-			this.decTxt = new createjs.Text(this.decScore.toString(), "bold 55px Arial", "#898989"),
-			this.decTxt.x = 100,
-			this.decTxt.y = a - 110,
-			this.decTxt.textAlign = "center",
-			this.stage.addChild(this.decTxt),
-			this.addTxt = new createjs.Text("0", "bold 55px Arial", "#ff9700"),
-			this.addTxt.x = 680,
-			this.addTxt.y = a - 110,
-			this.addTxt.textAlign = "center",
-			this.stage.addChild(this.addTxt),
-			this.timeTxt = new createjs.Text("60", "bold 40px Microsoft Yahei", "#fff"),
-			this.timeTxt.x = 28,
-			this.timeTxt.y = 10,
-			this.stage.addChild(this.timeTxt),
-			this.bubbleContainer = new createjs.Container,
-			this.bubbleContainer.x = 0,
-			this.bubbleContainer.y = 65,
-			this.stage.addChild(this.bubbleContainer),
-			this.stage.update()
+			//+
+			var addBitmap = new createjs.Bitmap(loader.getResult("add"));
+			var addBitmapBounds = addBitmap.getBounds();
+			addBitmap.x = -addBitmapBounds.width / 2;
+			addBitmap.y = -addBitmapBounds.height / 2;
+			this.add = new createjs.Container();;
+			this.add.x = 620;
+			this.add.y = winHeight - 51;
+			this.add.addChild(addBitmap);
+			this.stage.addChild(this.add);
+
+			//减分 Txt
+			this.decTxt = new createjs.Text(this.decScore.toString(), "bold 55px Arial", '#898989');
+			this.decTxt.x = 100;
+			this.decTxt.y = winHeight - 110;
+			this.decTxt.textAlign = 'center';
+			this.stage.addChild(this.decTxt);
+
+			//加分 Txt
+			this.addTxt = new createjs.Text("0", "bold 55px Arial", '#ff9700');
+			this.addTxt.x = 680;
+			this.addTxt.y = winHeight - 110;
+			this.addTxt.textAlign = 'center';
+			this.stage.addChild(this.addTxt);
+
+
+			//压缩器
+			/*this.compressor =  new createjs.Bitmap(loader.getResult("compressor"));
+			this.compressor.x = 0;
+			this.compressor.y = 0;
+			this.compressor.setTransform  (0,0,this.stageW/613,0.2);
+			this.stage.addChild(this.compressor);	*/
+
+
+			//time Txt
+			var timeTxt = new createjs.Text("time", "bold 30px Arial", '#fff')
+			timeTxt.x = 28;
+			timeTxt.y = 13;
+			this.stage.addChild(timeTxt);
+
+			//气泡容器
+			this.bubbleContainer = new createjs.Container;
+			this.bubbleContainer.x = 0;
+			this.bubbleContainer.y = 65;
+			this.stage.addChild(this.bubbleContainer);
+
+
+			this.stage.update();
 		},
 		initBubbles: function() {
-			for (var a = 0; a < this.TOTALROW; a++) {
-				this.bubbleArray[c] = [];
-				for (var b = 0; b < this.TOTALCOL; b++) this.bubbleArray[c][b] = null
+			for (var i = 0; i < this.TOTALROW; i++) {
+				this.bubbleArray[r] = [];
+				for (var j = 0; j < this.TOTALCOL; j++) {
+					this.bubbleArray[r][j] = null;
+				}
 			}
-			for (var c = 0; c < this.TOTALROW; c++) if (this.bubbleArray[c] = [], c < this.ROW) for (var d = 0; d < this.TOTALCOL; d++) {
-				var e = {};
-				e.bubbleArray = this.bubbleArray,
-				0 == c % 2 ? (e.x = d * this.MAP_EL_W, e.y = c * this.MAP_EL_H, e.row = c, e.col = d, e.TOTALCOL = this.TOTALCOL, e.MAP_EL_W = this.MAP_EL_W, e.MAP_EL_H = this.MAP_EL_H, this.bubbleArray[c][d] = new h(e), this.bubbleContainer.addChild(this.bubbleArray[c][d].el)) : d == this.TOTALCOL - 1 ? this.bubbleArray[c][d] = null: (e.x = d * this.MAP_EL_W + this.MAP_EL_W / 2, e.y = c * this.MAP_EL_H, e.row = c, e.col = d, e.TOTALCOL = this.TOTALCOL, e.MAP_EL_W = this.MAP_EL_W, e.MAP_EL_H = this.MAP_EL_H, this.bubbleArray[c][d] = new h(e), this.bubbleContainer.addChild(this.bubbleArray[c][d].el))
-			} else this.bubbleArray[c] = [];
-			this.setBullet(),
-			this.stage.update(),
-			this.bubbleArray.length = this.TOTALROW
+
+			for (var r = 0; r < this.TOTALROW; r++) {
+				this.bubbleArray[r] = [];
+				if (r < this.ROW) {
+					for (var c = 0; c < this.TOTALCOL; c++) {
+						var obj = {};
+						obj.bubbleArray = this.bubbleArray;
+						if (r % 2 == 0) {
+							obj.x = c * this.MAP_EL_W;
+							obj.y = r * this.MAP_EL_H;
+							obj.row = r;
+							obj.col = c;
+							obj.TOTALCOL = this.TOTALCOL;
+							obj.MAP_EL_W = this.MAP_EL_W;
+							obj.MAP_EL_H = this.MAP_EL_H;
+							this.bubbleArray[r][c] = new Bubble(obj);
+							this.bubbleContainer.addChild(this.bubbleArray[r][c].el);
+						} else {
+							if (c == this.TOTALCOL - 1) { //偶行少一个
+								this.bubbleArray[r][c] = null;
+							} else {
+								obj.x = c * this.MAP_EL_W + this.MAP_EL_W / 2;
+								obj.y = r * this.MAP_EL_H;
+								obj.row = r;
+								obj.col = c;
+								obj.TOTALCOL = this.TOTALCOL;
+								obj.MAP_EL_W = this.MAP_EL_W;
+								obj.MAP_EL_H = this.MAP_EL_H;
+								this.bubbleArray[r][c] = new Bubble(obj);
+								this.bubbleContainer.addChild(this.bubbleArray[r][c].el);
+							}
+							//}
+						}
+					}
+				} else {
+					this.bubbleArray[r] = [];
+				}
+			}
+			this.setBullet();
+			this.stage.update();
+			this.bubbleArray.length = this.TOTALROW;
+
 		},
-		createBubble: function() {},
+		createBubble: function(obj) {
+
+
+		},
+		//小球准备
 		setBullet: function() {
-			var a = this;
-			this.bulletArr[0] || (this.bulletArr[0] = this.createSecondBullet(250, this.stageH - 300), this.bubbleContainer.addChild(this.bulletArr[0].el)),
-			this.bulletArr[1] || (this.bulletArr[1] = this.createSecondBullet(200, this.stageH - 200), this.bubbleContainer.addChild(this.bulletArr[1].el)),
-			this.bullet = this.bulletArr[0],
-			this.stage.update(),
-			this.el.canvas.addEventListener("touchstart",
-			function() {
-				a.shoot || ($("#shootAudio")[0].play(), $("#bgAudio")[0].play(), a.clickHandler(), a.bulletArr[1].data.x = 250, a.bulletArr[1].data.y = a.stageH - 300, createjs.Tween.get(a.bulletArr[1].el).to({
-					y: a.stageH - 300,
+			var _this = this;
+			if (!this.bulletArr[0]) {
+				this.bulletArr[0] = this.createSecondBullet(250, this.stageH - 300);
+				this.bubbleContainer.addChild(this.bulletArr[0].el);
+			}
+			if (!this.bulletArr[1]) {
+				this.bulletArr[1] = this.createSecondBullet(200, this.stageH - 200);
+				this.bubbleContainer.addChild(this.bulletArr[1].el);
+			}
+			this.bullet = this.bulletArr[0];
+			this.stage.update();
+
+			this.el.canvas.addEventListener('touchstart', function(e) {
+				if (_this.shoot) { //发射中
+					return;
+				}
+				$('#shootAudio')[0].play(); //
+				$('#bgAudio')[0].play();
+				_this.clickHandler();
+				_this.bulletArr[1].data.x = 250; //不用是set防止el直接刷新
+				_this.bulletArr[1].data.y = _this.stageH - 300; //不用是set防止el直接刷新
+				createjs.Tween.get(_this.bulletArr[1].el).to({
+					y: _this.stageH - 300,
 					x: 250
-				},
-				200, createjs.Ease.linear), a.bulletArr.shift())
-			})
+				}, 200, createjs.Ease.linear);
+				_this.bulletArr.shift();
+			});
 		},
-		createSecondBullet: function(a, b) {
-			var c = {};
-			return c.x = a,
-			c.y = b,
-			c.bubbleArray = this.bubbleArray,
-			c.TOTALCOL = this.TOTALCOL,
-			c.MAP_EL_W = this.MAP_EL_W,
-			c.MAP_EL_H = this.MAP_EL_H,
-			c.isBullet = !0,
-			c.type = Math.floor(3 * Math.random()),
-			new h(c)
+		createSecondBullet: function(x, y) {
+
+			var obj = {};
+			obj.x = x;
+			obj.y = y;
+			obj.bubbleArray = this.bubbleArray;
+			obj.TOTALCOL = this.TOTALCOL;
+			obj.MAP_EL_W = this.MAP_EL_W;
+			obj.MAP_EL_H = this.MAP_EL_H;
+			obj.isBullet = true;
+			obj.type = Math.floor(Math.random() * 3);
+			return new Bubble(obj);;
 		},
-		clickHandler: function() {
-			this.initX = this.bullet.get("x"),
-			this.initY = this.bullet.get("y"),
-			this.initMouseX = this.stage.mouseX,
-			this.initMouseY = this.stage.mouseY,
-			this.initMouseY > a - 536 && (this.initMouseY = a - 536);
-			var c = 180 * Math.atan2(this.initMouseY - this.nippleCon.y, this.initMouseX - this.nippleCon.x) / Math.PI + 13 + 90;
-			this.nippleCon.rotation = c,
-			175 * Math.cos(c * (Math.PI / 180)),
-			175 * Math.sin(c * (Math.PI / 180));
-			var f = 30;
-			this._vx = f * Math.cos(Math.atan((this.initMouseY - (this.initY + this.RADIUS / 2)) / (this.initMouseX - (this.initX + this.RADIUS / 2)))),
-			this._vy = f * Math.sin(Math.atan((this.initMouseY - (this.initY + this.RADIUS / 2)) / (this.initMouseX - (this.initX + this.RADIUS / 2)))),
-			this.shoot = !0
+		//舞台点击
+		clickHandler: function(pos) {
+			//子弹的初始位置，会在game中实例化
+			this.initX = this.bullet.get('x');
+			this.initY = this.bullet.get('y');
+			this.initMouseX = this.stage.mouseX;
+			this.initMouseY = this.stage.mouseY;
+			if (this.initMouseY > winHeight - 536) {
+				this.initMouseY = winHeight - 536;
+			}
+
+			var rot = Math.atan2(this.initMouseY - this.nippleCon.y, this.initMouseX - this.nippleCon.x) * 180 / Math.PI + 13 + 90;
+			this.nippleCon.rotation = rot;
+
+			var w = Math.cos(rot * (Math.PI / 180)) * 175;
+			var h = Math.sin(rot * (Math.PI / 180)) * 175;
+			//this.bullet.set('x',this.bullet.get('x')+w);
+			//	this.bullet.set('y',this.bullet.get('y')-200);
+
+			//射击速度
+			var speed = 30;
+			//this.bullet.el.x +=20;
+			this._vx = speed * Math.cos(Math.atan((this.initMouseY - (this.initY + this.RADIUS / 2)) / (this.initMouseX - (this.initX + this.RADIUS / 2))));
+			this._vy = speed * Math.sin(Math.atan((this.initMouseY - (this.initY + this.RADIUS / 2)) / (this.initMouseX - (this.initX + this.RADIUS / 2))));
+			this.shoot = true;
+			//this.stage.update();
 		},
+
 		start: function() {
-			this.createEls(),
-			this.initBubbles()
+			this.createEls();
+			this.initBubbles();
+
 		},
 		checkHit: function() {
-			if (this.shoot && this.bullet) for (var a = 0; a < this.TOTALROW; a++) for (var b = 0; b < this.TOTALCOL; b++) if (this.bubbleArray[a][b]) {
-				var c = this.bullet.get("x") + this.bubbleW / 2,
-				d = this.bullet.get("y") + this.bubbleH / 2,
-				e = this.bubbleArray[a][b].get("x") + this.bubbleW / 2,
-				f = this.bubbleArray[a][b].get("y") + this.bubbleH / 2;
-				if (Math.sqrt(Math.pow(e - c, 2) + Math.pow(f - d, 2)) < this.bubbleW) {
-					if (3 == this.bubbleArray[a][b].get("type")) {
-						this.manSprite.gotoAndPlay("state1"),
-						this.decScore++,
-						this.decScore < 0 && (this.decScore = 0),
-						createjs.Tween.get(this.dec).to({
-							scaleX: 1.5,
-							scaleY: 1.5
-						},
-						300, createjs.Ease.linear).to({
-							scaleX: 1,
-							scaleY: 1
-						},
-						300, createjs.Ease.linear),
-						this.decTxt.text = this.decScore.toString(),
-						this.leftNod.alpha += .2;
-						var g = this.addScore - this.decScore;
-						0 > g && (g = 0),
-						this.downAni2(),
-						$(".score-inner").text(g)
-					} else this.manSprite.gotoAndPlay("state3");
-					this._vx = 0,
-					this._vy = 0,
-					this.row = a,
-					this.col = b,
-					this.setPosition(),
-					this.setBullet();
-					break
+			if (!this.shoot || !this.bullet) {
+				return;
+			}
+			for (var r = 0; r < this.TOTALROW; r++) {
+				for (var c = 0; c < this.TOTALCOL; c++) {
+					if (this.bubbleArray[r][c]) {
+
+						//算两具圆心距
+						var dx1 = this.bullet.get('x') + this.bubbleW / 2;
+						var dy1 = this.bullet.get('y') + this.bubbleH / 2;
+
+						var hit1 = this.bubbleArray[r][c].get('x') + this.bubbleW / 2;
+						var hit2 = this.bubbleArray[r][c].get('y') + this.bubbleH / 2;
+
+						if (Math.sqrt(Math.pow(hit1 - dx1, 2) + Math.pow(hit2 - dy1, 2)) < this.bubbleW) {
+							$('#hitAudio')[0].play(); //
+
+							if (this.bubbleArray[r][c].get('type') == 3) { //第三个是X,
+
+								this.manSprite.gotoAndPlay('state1');
+								//减分和加
+								this.decScore++;
+								if (this.decScore < 0) {
+									this.decScore = 0;
+								}
+								createjs.Tween.get(this.dec).to({
+									scaleX: 1.5,
+									scaleY: 1.5
+								}, 300, createjs.Ease.linear).to({
+									scaleX: 1,
+									scaleY: 1
+								}, 300, createjs.Ease.linear);
+								this.decTxt.text = this.decScore.toString();
+								this.leftNod.alpha += 0.2;
+								var totalScore = this.addScore - this.decScore;
+								this.downAni2();
+								$(".score-inner").text(totalScore);
+							} else {
+								this.manSprite.gotoAndPlay('state3');
+							}
+							this._vx = 0;
+							this._vy = 0;
+							this.row = r;
+							this.col = c;
+
+							this.setPosition();
+							this.setBullet();
+							break;
+						}
+					}
 				}
 			}
+
 		},
+
 		setPosition: function() {
-			this.shoot = !1;
-			var a = this.row,
-			b = this.col,
-			c = 0;
-			this.core_r,
-			this.core_c;
-			var f = this.TOTALCOL;
-			this.TOTALROW;
-			var m, i = this.bubbleArray,
-			j = this.bubbleArray[a][b].getSuroundPosition(),
-			k = [],
-			l = this.bubbleArray[a][b].getAroundBub(),
-			n = [];
-			for (0 == a % 2 ? 0 == a ? 0 == b ? (n = [[a, b + 1], [a + 1, b]], m = [2, 3]) : b == f - 1 ? (n = [[a + 1, b - 1], [a, b - 1]], m = [4, 5]) : (n = [[a, b + 1], [a + 1, b], [a + 1, b - 1], [a, b - 1]], m = [2, 3, 4, 5]) : 0 == b ? (n = [[a - 1, b], [a, b + 1], [a + 1, b]], m = [1, 2, 3]) : b == f - 1 ? (n = [[a - 1, b - 1], [a + 1, b - 1], [a, b - 1]], m = [0, 4, 5]) : (n = [[a - 1, b - 1], [a - 1, b], [a, b + 1], [a + 1, b], [a + 1, b - 1], [a, b - 1]], m = [0, 1, 2, 3, 4, 5]) : 0 == b ? (n = [[a - 1, b], [a - 1, b + 1], [a, b + 1], [a + 1, b + 1], [a + 1, b]], m = [0, 1, 2, 3, 4]) : b == f - 2 ? (n = [[a - 1, b], [a - 1, b + 1], [a + 1, b + 1], [a + 1, b], [a, b - 1]], m = [0, 1, 3, 4, 5]) : (n = [[a - 1, b], [a - 1, b + 1], [a, b + 1], [a + 1, b + 1], [a + 1, b], [a, b - 1]], m = [0, 1, 2, 3, 4, 5]), c = 0; c < l.length; c++)(void 0 == l[c] || null == l[c]) && k.push([this.bullet.getDistance(j[c]), n[c], m[c]]);
-			k.sort(function(a, b) {
-				return a[0] - b[0]
-			}),
-			this.core_r = k[0][1][0],
-			this.core_c = k[0][1][1];
-			var o = {};
-			o.bubbleArray = this.bubbleArray,
-			o.x = j[k[0][2]][0],
-			o.y = j[k[0][2]][1],
-			o.row = this.core_r,
-			o.col = this.core_c,
-			o.TOTALCOL = this.TOTALCOL,
-			o.MAP_EL_W = this.MAP_EL_W,
-			o.MAP_EL_H = this.MAP_EL_H,
-			o.type = this.bullet.get("type"),
-			i[this.core_r][this.core_c] = new h(o),
-			this.bubbleContainer.addChild(i[this.core_r][this.core_c].el),
-			this.bubbleContainer.removeChild(this.bullet.el),
-			this.bullet = null;
-			var p = this.firstSearch(i[this.core_r][this.core_c]),
-			q = this.sameBubbleTotal;
-			if (q = 0 == p.lenth ? null: this.searchSameColor(p), q.length > 2) {
-				for (var r = 0; r < q.length; r++) {
-					var s = q[r];
-					s.el.parent;
-					var u = s.el;
-					this.bombBubble(u, s.get("type")),
-					i[s.get("row")][s.get("col")] = null,
-					q[r] = null
+			this.shoot = false;
+			var row = this.row;
+			var col = this.col;
+			var i = 0;
+
+			var core_r = this.core_r;
+			var core_c = this.core_c;
+			var TOTALCOL = this.TOTALCOL;
+			var TOTALROW = this.TOTALROW;
+			var bubbleArray = this.bubbleArray;
+			var suroundPositionArr = this.bubbleArray[row][col].getSuroundPosition();
+
+			var distanceArr = [];
+
+			var roundArr = this.bubbleArray[row][col].getAroundBub();
+			var arr;
+			var arrRC = []; //记录位置
+
+			if (row % 2 == 0) { //偶行
+
+				if (row == 0) { //第一行
+					if (col == 0) //第一列
+					{
+						arrRC = [
+							[row, col + 1],
+							[row + 1, col]
+						]
+						arr = [2, 3];
+					} else if (col == TOTALCOL - 1) {
+						arrRC = [
+							[row + 1, col - 1],
+							[row, col - 1]
+						]
+						arr = [4, 5];
+					} else {
+						arrRC = [
+							[row, col + 1],
+							[row + 1, col],
+							[row + 1, col - 1],
+							[row, col - 1]
+						];
+						arr = [2, 3, 4, 5];
+					}
+				} else {
+					if (col == 0) //第一列
+					{
+						arrRC = [
+							[row - 1, col],
+							[row, col + 1],
+							[row + 1, col]
+						];
+						arr = [1, 2, 3];
+					} else if (col == TOTALCOL - 1) {
+						arrRC = [
+							[row - 1, col - 1],
+							[row + 1, col - 1],
+							[row, col - 1]
+						];
+						arr = [0, 4, 5];
+					} else {
+						arrRC = [
+							[row - 1, col - 1],
+							[row - 1, col],
+							[row, col + 1],
+							[row + 1, col],
+							[row + 1, col - 1],
+							[row, col - 1]
+						];
+						arr = [0, 1, 2, 3, 4, 5];
+
+					}
 				}
-				this.search1()
 			} else {
-				var v = this.searchWrongBuble(i[this.core_r][this.core_c])[0];
-				if (v) {
-					var u = v.el;
-					this.bombBubble(u, v.get("type")),
-					i[v.get("row")][v.get("col")] = null,
-					this.search1()
+				if (col == 0) {
+
+					arrRC = [
+						[row - 1, col],
+						[row - 1, col + 1],
+						[row, col + 1],
+						[row + 1, col + 1],
+						[row + 1, col]
+					];
+					arr = [0, 1, 2, 3, 4];
+				} else if (col == TOTALCOL - 2) {
+
+					arrRC = [
+						[row - 1, col],
+						[row - 1, col + 1],
+						[row + 1, col + 1],
+						[row + 1, col],
+						[row, col - 1]
+					];
+					arr = [0, 1, 3, 4, 5];
+				} else {
+					arrRC = [
+						[row - 1, col],
+						[row - 1, col + 1],
+						[row, col + 1],
+						[row + 1, col + 1],
+						[row + 1, col],
+						[row, col - 1]
+					];
+					arr = [0, 1, 2, 3, 4, 5];
 				}
 			}
-			this.checkGameOver()
-		},
-		firstSearch: function(a) {
-			var b;
-			this.bubbleArray,
-			b = a.getAroundBub();
-			for (var d = b.length - 1; d > -1; d--)(!b[d] || b[d] && b[d].get("type") != a.get("type")) && b.splice(d, 1);
-			return b
-		},
-		searchWrongBuble: function(a) {
-			var b;
-			this.bubbleArray,
-			b = a.getAroundBub();
-			for (var d = b.length - 1; d > -1; d--)(!b[d] || b[d] && 3 != b[d].get("type")) && b.splice(d, 1);
-			return b
-		},
-		searchSameColor: function(a) {
-			for (var b = 0; b < a.length; b++) {
-				a = a.concat(this.searchAroundSameColor(this.bubbleArray, a[b].get("row"), a[b].get("col")));
-				for (var c = [], d = 0; d < a.length; d++) - 1 == c.indexOf(a[d]) && c.push(a[d]);
-				a = c
+
+			//roundArr对应bubble，arr对应各个位置
+			for (i = 0; i < roundArr.length; i++) {
+
+				if (roundArr[i] == undefined || roundArr[i] == null) { //已经有球了
+					distanceArr.push([this.bullet.getDistance(suroundPositionArr[i]), arrRC[i], arr[i]]);
+				}
 			}
-			var e = this.lenArra;
-			return e.push(a.length),
-			e[e.length - 1] == e[e.length - 2] ? a: (this.searchSameColor(a), a)
+			//大小排序
+			distanceArr.sort(function(a, b) {
+				return a[0] - b[0];
+			});
+
+			this.core_r = distanceArr[0][1][0];
+			this.core_c = distanceArr[0][1][1];
+
+			var obj = {};
+			obj.bubbleArray = this.bubbleArray;
+			obj.x = suroundPositionArr[distanceArr[0][2]][0];
+			obj.y = suroundPositionArr[distanceArr[0][2]][1];
+			obj.row = this.core_r;
+			obj.col = this.core_c;
+			obj.TOTALCOL = this.TOTALCOL;
+			obj.MAP_EL_W = this.MAP_EL_W;
+			obj.MAP_EL_H = this.MAP_EL_H;
+			obj.type = this.bullet.get('type');
+			bubbleArray[this.core_r][this.core_c] = new Bubble(obj);
+			this.bubbleContainer.addChild(bubbleArray[this.core_r][this.core_c].el);
+
+			this.bubbleContainer.removeChild(this.bullet.el);
+			this.bullet = null;
+
+
+			//先手动搜索子弹的周围
+			var firstArr = this.firstSearch(bubbleArray[this.core_r][this.core_c]);
+			//trace("firstArr=",firstArr);
+
+			var sameBubbleTotal = this.sameBubbleTotal;
+			if (firstArr.lenth == 0) {
+				sameBubbleTotal = null;
+
+			} else {
+				//如果有，继续搜索
+				sameBubbleTotal = this.searchSameColor(firstArr);
+				//trace(sameBubbleTotal);
+			}
+			//消除普通气泡
+			if (sameBubbleTotal.length > 2) {
+				for (var k = 0; k < sameBubbleTotal.length; k++) {
+					//舞台消除
+					var sameBubble = sameBubbleTotal[k];
+					var elParent = sameBubble.el.parent;
+
+					var dropEl = sameBubble.el;
+					this.bombBubble(dropEl, sameBubble.get('type'));
+					bubbleArray[sameBubble.get('row')][sameBubble.get('col')] = null;
+					sameBubbleTotal[k] = null;
+				}
+
+				//递归2 ,消除悬空的气泡
+				this.search1();
+			} else {
+				//消除击中的X
+				var wrongBubble = this.searchWrongBuble(bubbleArray[this.core_r][this.core_c])[0];
+				if (wrongBubble) {
+					var dropEl = wrongBubble.el;
+					this.bombBubble(dropEl, wrongBubble.get('type'));
+					bubbleArray[wrongBubble.get('row')][wrongBubble.get('col')] = null;
+					//递归2 ,消除悬空的气泡
+					this.search1();
+				}
+			}
+
+			//检查是否gameover
+			this.checkGameOver();
 		},
-		searchAroundSameColor: function(a, b, c) {
-			var d = [];
-			d = a[b][c].getAroundBub();
-			for (var e = d.length - 1; e > -1; e--)(!d[e] || d[e] && d[e].get("type") != a[b][c].get("type")) && d.splice(e, 1);
-			return d
+
+		firstSearch: function(obj) {
+			var temArray;
+			/*		var r = obj.get('row');
+					var c = obj.get('col');*/
+			var bubbleArray = this.bubbleArray;
+			//分几种情况
+			temArray = obj.getAroundBub();
+			//检查颜色类型是否一致，不一致要除掉
+			for (var i = temArray.length - 1; i > -1; i--) {
+				if (!temArray[i] || (temArray[i] && temArray[i].get('type') != obj.get('type'))) {
+					temArray.splice(i, 1);
+				}
+			}
+			return temArray;
+
 		},
+		searchWrongBuble: function(obj) {
+			var temArray;
+			var bubbleArray = this.bubbleArray;
+			//分几种情况
+			temArray = obj.getAroundBub();
+			//检查颜色类型是否一致，不一致要除掉
+			for (var i = temArray.length - 1; i > -1; i--) {
+				if (!temArray[i] || (temArray[i] && temArray[i].get('type') != 3)) {
+					temArray.splice(i, 1);
+				}
+			}
+			return temArray;
+		},
+		searchSameColor: function(arr) {
+			for (var i = 0; i < arr.length; i++) {
+				//结果再加入自己的数组
+				arr = arr.concat(this.searchAroundSameColor(this.bubbleArray, arr[i].get('row'), arr[i].get('col')));
+				//trace("get=",getRow(arr[i]));
+				//祛除重复
+				var temp = [];
+				for (var g = 0; g < arr.length; g++) {
+					if (temp.indexOf(arr[g]) == -1) {
+						temp.push(arr[g]);
+					}
+				}
+				arr = temp;
+			}
+			//加入标尺
+			var lenArra = this.lenArra;
+			lenArra.push(arr.length);
+			//出口
+			if (lenArra[lenArra.length - 1] == lenArra[lenArra.length - 2]) {
+				return arr;
+			} else {
+				this.searchSameColor(arr);
+				return arr;
+			}
+		},
+
+		//递归入口
+		searchAroundSameColor: function(arr, r, c) {
+			var temArr = [];
+			temArr = arr[r][c].getAroundBub();
+			for (var i = temArr.length - 1; i > -1; i--) {
+				if (!temArr[i] || (temArr[i] && temArr[i].get('type') != arr[r][c].get('type'))) {
+					temArr.splice(i, 1);
+				}
+			}
+			return temArr;
+		},
+
+		//先从最顶层个一个开始
 		search1: function() {
-			for (var c, a = this.bubbleArray,
-			b = [], d = [], e = 0; e < this.TOTALCOL; e++) {
-				var f = a[0][e];
-				if (f) {
-					var g = this.searchAround(f);
-					for (c = 0, d = []; c < g.length; c++) - 1 == d.indexOf(g[c]) && d.push(g[c]);
-					b = b.concat(d)
+			var bubbleArray = this.bubbleArray;
+			var arr = [];
+			var g;
+			var temp = [];
+			for (var c = 0; c < this.TOTALCOL; c++) {
+				var obj = bubbleArray[0][c];
+				if (obj) {
+					var arrayT = this.searchAround(obj);
+
+					//还是去掉重复的
+					for (g = 0, temp = []; g < arrayT.length; g++) {
+						if (temp.indexOf(arrayT[g]) == -1) {
+							temp.push(arrayT[g]);
+						}
+					}
+					arr = arr.concat(temp);
 				}
 			}
-			for (c = 0, d = []; c < b.length; c++) - 1 == d.indexOf(b[c]) && d.push(b[c]);
-			b = d;
-			for (var h = 0; h < this.TOTALROW; h++) for (var i = 0; i < this.TOTALCOL; i++) a[h][i] && -1 == b.indexOf(a[h][i]) && (this.bombBubble(a[h][i].el, a[h][i].get("type")), a[h][i] = null)
-		},
-		searchAround: function(a) {
-			this.bubbleArray;
-			for (var c, d = a.getAroundBub(), e = d.length - 1; e > -1; e--) d[e] || d.splice(e, 1);
-			return 0 == d.length ? [a] : c = this.searchSlings(d)
-		},
-		searchSlings: function(a) {
-			for (var b = 0; b < a.length; b++) {
-				a = a.concat(a[b].getAroundBub());
-				for (var c = a.length - 1; c > -1; c--) a[c] || a.splice(c, 1);
-				for (var d = 0,
-				e = []; d < a.length; d++) - 1 == e.indexOf(a[d]) && e.push(a[d]);
-				a = e
+
+			for (g = 0, temp = []; g < arr.length; g++) {
+				if (temp.indexOf(arr[g]) == -1) {
+					temp.push(arr[g]);
+				}
 			}
-			var f = this.dropLenArr;
-			return f.push(a.length),
-			f[f.length - 1] == f[f.length - 2] ? a: (this.searchSlings(a), a)
+			arr = temp;
+
+			//var temDropArr = [];
+			//把剩下的放入数组
+			for (var i = 0; i < this.TOTALROW; i++) {
+				for (var j = 0; j < this.TOTALCOL; j++) {
+					if ((bubbleArray[i][j]) && arr.indexOf(bubbleArray[i][j]) == -1) {
+						this.bombBubble(bubbleArray[i][j].el, bubbleArray[i][j].get('type'));
+						bubbleArray[i][j] = null;
+					}
+				}
+			}
 		},
-		searchAroundNear: function(a, b, c) {
-			var d = [];
-			d = a[b][c].getAroundBub();
-			for (var e = d.length - 1; e > -1; e--) d[e] || d.splice(e, 1);
-			return d
+		searchAround: function(obj) {
+			var bubbleArray = this.bubbleArray;
+			var arrayD;
+			var array1 = obj.getAroundBub();
+			//祛除空对象
+			for (var i = array1.length - 1; i > -1; i--) {
+				if (!array1[i]) {
+					array1.splice(i, 1);
+				}
+			}
+
+			//如果没有，要返回它自己到数组
+			if (array1.length == 0) {
+				return [obj];
+			} else {
+				//跟找相同颜色的方法相似，少了个检查颜色
+				arrayD = this.searchSlings(array1);
+			}
+			return arrayD;
 		},
-		getAroundBubDis: function(a, b, c) {
-			var d = {};
-			0 == a % 2 ? (d.x = b * this.get("MAP_EL_W"), d.y = a * this.get("MAP_EL_H")) : (d.x = b * this.get("MAP_EL_W") + this.get("MAP_EL_W") / 2, d.y = a * this.get("MAP_EL_H")),
-			d.col = b,
-			d.row = a;
-			var e = c.get("x") - d.x,
-			f = c.get("y") - d.y;
-			return d.dis = Math.sqrt(e * e, f * f),
-			d
+		searchSlings: function(arr) {
+			for (var ii = 0; ii < arr.length; ii++) {
+				arr = arr.concat(arr[ii].getAroundBub());
+				for (var iii = arr.length - 1; iii > -1; iii--) {
+					if (!(arr[iii])) {
+						arr.splice(iii, 1);
+					}
+				}
+				for (var g = 0, temp = []; g < arr.length; g++) {
+					if (temp.indexOf(arr[g]) == -1) {
+						temp.push(arr[g]);
+					}
+				}
+				arr = temp;
+			}
+
+			var dropLenArr = this.dropLenArr;
+			dropLenArr.push(arr.length);
+			if (dropLenArr[dropLenArr.length - 1] == dropLenArr[dropLenArr.length - 2]) {
+
+				return arr;
+			} else {
+				this.searchSlings(arr);
+				return arr;
+			}
 		},
+		//第二个递归的基础，找连接的
+		searchAroundNear: function(arr, r, c) {
+			var temArr = [];
+			temArr = arr[r][c].getAroundBub();
+			for (var i = temArr.length - 1; i > -1; i--) {
+				if (!temArr[i]) {
+					temArr.splice(i, 1);
+				}
+			}
+			return temArr;
+		},
+
+		//算出该点的位置及他的距离
+		getAroundBubDis: function(row, col, bub1) {
+			var obj = {};
+			if (row % 2 == 0) {
+				obj.x = col * this.get('MAP_EL_W');
+				obj.y = row * this.get('MAP_EL_H');
+			} else {
+				obj.x = col * this.get('MAP_EL_W') + this.get('MAP_EL_W') / 2;
+				obj.y = row * this.get('MAP_EL_H');
+			}
+			obj.col = col;
+			obj.row = row;
+			var dx = bub1.get('x') - obj.x;
+			var dy = bub1.get('y') - obj.y;
+			obj.dis = Math.sqrt(dx * dx, dy * dy);
+
+			return obj;
+		},
+
 		downBubbles: function() {
-			this.bubbleArray;
-			for (var b = 0; b < this.bubbleArray.length; b++) for (var c = 0; c < this.TOTALCOL; c++);
+			var bubbleArray = this.bubbleArray;
+			for (var r = 0; r < this.bubbleArray.length; r++) {
+				for (var c = 0; c < this.TOTALCOL; c++) {}
+
+			}
+
 		},
-		bombBubble: function(a, b) {
-			var d = this;
-			if (3 == b);
-			else {
-				this.addScore++,
-				this.aniCount++,
-				$("#hitAudio")[0].play(),
+		bombBubble: function(obj, type) {
+			var dropEl = obj;
+			var _this = this;
+			if (type == 3) { //此为x
+
+			} else {
+				this.addScore++;
+				this.aniCount++;
 				createjs.Tween.get(this.add).to({
 					scaleX: 1.5,
 					scaleY: 1.5
-				},
-				300, createjs.Ease.linear).to({
+				}, 300, createjs.Ease.linear).to({
 					scaleX: 1,
 					scaleY: 1
-				},
-				300, createjs.Ease.linear),
-				this.addScore >= 40 ? this.rightBottle.gotoAndStop("state4") : this.addScore >= 30 ? this.rightBottle.gotoAndStop("state3") : this.addScore >= 20 && this.rightBottle.gotoAndStop("state2"),
-				this.aniCount >= 5 && (this.aniCount = 0, this.downAni(), setTimeout(function() {
-					d.tipsAni()
-				},
-				300)),
+				}, 300, createjs.Ease.linear)
+				if (this.addScore >= 40) {
+					this.rightBottle.gotoAndStop('state4');
+				} else if (this.addScore >= 30) {
+					this.rightBottle.gotoAndStop('state3');
+				} else if (this.addScore >= 20) {
+					this.rightBottle.gotoAndStop('state2');
+				}
+				if (this.aniCount >= 5) {
+					this.aniCount = 0;
+					this.downAni();
+					setTimeout(function() {
+						_this.tipsAni();
+					}, 800)
+				}
+
 				this.addTxt.text = this.addScore.toString();
-				var e = this.addScore - this.decScore;
-				0 > e && (e = 0),
-				$(".score-inner").text(e)
+				var totalScore = this.addScore - this.decScore;
+				$(".score-inner").text(totalScore);
 			}
-			a.gotoAndPlay("bomb");
-			var d = this;
-			a.addEventListener("tick",
-			function(a) {
-				11 == a.currentTarget.currentFrame && setTimeout(function() {
-					a.currentTarget.stop(),
-					d.bubbleContainer.contains(a.currentTarget) && d.bubbleContainer.removeChild(a.currentTarget),
-					a.currentTarget.removeEventListener("tick")
-				},
-				300)
+			obj.gotoAndPlay('bomb'); //爆炸动画坐标居中的,本来要加下位置,但由于原型的关系，都在同一个位置了，草
+			var _this = this;
+			obj.addEventListener('tick', function(e) {
+				if (e.currentTarget.currentFrame == 11) {
+					setTimeout(function() {
+						e.currentTarget.stop();
+						if (_this.bubbleContainer.contains(e.currentTarget)) {
+							_this.bubbleContainer.removeChild(e.currentTarget)
+						}
+						e.currentTarget.removeEventListener('tick');
+					}, 300);
+				}
 			})
 		},
 		checkGameOver: function() {
-			var b = Math.ceil(a / 150);
-			for (i = 0; i < this.TOTALCOL; i++) if (this.bubbleArray[b][i]) {
-				var c = this.addScore - this.decScore;
-				window.localStorage.score = 0 > c ? 0 : c,
-				window.gameOver()
+			//检测是否gameover
+			//计算第几行触线
+			var overline = Math.ceil(winHeight / 150);
+			for (i = 0; i < this.TOTALCOL; i++) {
+				if (this.bubbleArray[overline][i]) { //13行有就gameOVER
+					var finalScore = this.addScore - this.decScore;
+					if (finalScore < 0) {
+						window.localStorage.score = 0;
+					} else {
+						window.localStorage.score = finalScore;
+					}
+					window.gameOver();
+				}
 			}
 		},
+		//下落动画
 		downAni: function() {
-			var b = 1 * Math.random() > .5 ? "down1": "down2";
-			this.downSprite.visible = !0,
-			this.downSprite.scaleX = this.downSprite.scaleY = 2,
-			this.downSprite.gotoAndStop(b),
+			var a = Math.random() * 1 > 0.5 ? 'down1' : 'down2';
+			this.downSprite.visible = true;
+			this.downSprite.scaleX = this.downSprite.scaleY = 2;
+			this.downSprite.gotoAndStop(a);
 			createjs.Tween.get(this.downSprite).to({
-				y: a - 200,
-				scaleX: .8,
-				scaleY: .8,
-				alpha: .4
-			},
-			1100, createjs.Ease.linear).set({
-				visible: !1,
+				y: winHeight - 200,
+				scaleX: 0.8,
+				scaleY: 0.8,
+				alpha: 0.4
+			}, 1100, createjs.Ease.linear).set({
+				visible: false,
 				x: 685,
-				y: a - 756,
+				y: winHeight - 756,
 				scaleX: 1,
 				scaleY: 1,
 				alpha: 1
-			})
+			});
 		},
 		tipsAni: function() {
-			var a = Math.ceil(3 * Math.random());
-			this.tipsSprite.visible = !0,
-			this.tipsSprite.scaleX = this.downSprite.scaleY = 2,
-			this.tipsSprite.gotoAndPlay("state" + a),
+			var a = Math.ceil(Math.random() * 3);
+			this.tipsSprite.visible = true;
+			this.tipsSprite.scaleX = this.downSprite.scaleY = 2;
+			this.tipsSprite.gotoAndPlay("state" + a);
 			createjs.Tween.get(this.tipsSprite).to({
 				scaleX: 1.6,
 				scaleY: 1.6
-			},
-			1e3, createjs.Ease.linear).set({
-				visible: !1,
+			}, 1000, createjs.Ease.linear).set({
+				visible: false,
 				scaleX: 1.5,
 				scaleY: 1.5
-			})
+			});
 		},
+		//左边下落动画
 		downAni2: function() {
-			this.downSprite2.visible = !0,
-			this.downSprite2.scaleX = this.downSprite.scaleY = 1,
-			this.downSprite2.gotoAndStop("down3"),
+			this.downSprite2.visible = true;
+			this.downSprite2.scaleX = this.downSprite.scaleY = 1;
+			this.downSprite2.gotoAndStop("down3");
 			createjs.Tween.get(this.downSprite2).to({
-				y: a - 200,
-				scaleX: .4,
-				scaleY: .4,
-				alpha: .4
-			},
-			1100, createjs.Ease.linear).set({
-				visible: !1,
+				y: winHeight - 200,
+				scaleX: 0.4,
+				scaleY: 0.4,
+				alpha: 0.4
+			}, 1100, createjs.Ease.linear).set({
+				visible: false,
 				x: 95,
-				y: a - 756,
+				y: winHeight - 756,
 				scaleX: 1,
 				scaleY: 1,
 				alpha: 1
-			})
+			});
 		},
+		//flash中的enterFrame
 		tick: function() {
-			var a, b, c;
+			var i;
+			var j;
+			var obj;
 			if (this.shoot && this.bullet) {
-				var d, e;
-				if (this.initMouseX - this.MAP_EL_W / 2 >= this.initX ? (d = this.bullet.get("x") + this._vx, e = this.bullet.get("y") + this._vy, this.bullet.set("x", d), this.bullet.set("y", e)) : this.initMouseX - this.MAP_EL_W / 2 < this.initX && (d = this.bullet.get("x") - this._vx, e = this.bullet.get("y") - this._vy, this.bullet.set("x", d), this.bullet.set("y", e)), this.bullet.get("x") < 0 ? (this.bullet.set("x", 0), this._vx *= -1) : this.bullet.get("x") > this.stageW - this.MAP_EL_W && (this.bullet.set("x", this.stageW - this.MAP_EL_W), this._vx *= -1), this.bullet.get("y") < 0) {
-					for (var g = Math.abs(this.bullet.get("x")), i = g, j = 0, a = 0; a < this.TOTALCOL; a++) {
-						var k = Math.abs(g - a * this.MAP_EL_W);
-						i > k && !this.bubbleArray[0][a] && (i = k, j = a)
-					}
-					c = {},
-					c.bubbleArray = this.bubbleArray,
-					c.x = j * this.MAP_EL_W,
-					c.y = 0,
-					c.row = 0,
-					c.col = j,
-					c.TOTALCOL = this.TOTALCOL,
-					c.MAP_EL_W = this.MAP_EL_W,
-					c.MAP_EL_H = this.MAP_EL_H,
-					c.type = this.bullet.get("type"),
-					this.bubbleArray[0][j] = new h(c),
-					this.bubbleContainer.addChild(this.bubbleArray[0][j].el),
-					this.bubbleContainer.removeChild(this.bullet.el),
-					this.bullet = null,
-					this.shoot = !1,
-					this.setBullet()
+				var x;
+				var y;
+				var rat; //角度
+				//子弹运动规则
+				if (this.initMouseX - this.MAP_EL_W / 2 >= this.initX) {
+					x = this.bullet.get('x') + this._vx;
+					y = this.bullet.get('y') + this._vy;
+
+					this.bullet.set('x', x);
+					this.bullet.set('y', y);
+
+					//rat = Math.atan2(this._vy,this._vx)*180/Math.PI+90;
+					//this.bullet.el.rotation = rat;
+
+				} else if (this.initMouseX - this.MAP_EL_W / 2 < this.initX) {
+
+					x = this.bullet.get('x') - this._vx;
+					y = this.bullet.get('y') - this._vy;
+
+					this.bullet.set('x', x);
+					this.bullet.set('y', y);
+					//rat = Math.atan2(-this._vy,-this._vx)*180/Math.PI+90;
+					//this.bullet.el.rotation = rat;
+
 				}
-				this.checkHit()
+				if (this.bullet.get('x') < 0) {
+					this.bullet.set('x', 0);
+					this._vx *= -1;
+				} else if (this.bullet.get('x') > this.stageW - this.MAP_EL_W) {
+					this.bullet.set('x', this.stageW - this.MAP_EL_W);
+					this._vx *= -1;
+				}
+				if (this.bullet.get('y') < 0) { //出界
+					var bulletX = Math.abs(this.bullet.get('x'));
+
+					var dis = bulletX;
+					var index = 0;
+					for (var i = 0; i < this.TOTALCOL; i++) {
+						var d = Math.abs(bulletX - i * this.MAP_EL_W);
+						if (d < dis && !this.bubbleArray[0][i]) {
+							//console.log(d+':'+dis);
+							dis = d;
+							index = i;
+						}
+					}
+					obj = {};
+					obj.bubbleArray = this.bubbleArray;
+					obj.x = index * this.MAP_EL_W;
+					obj.y = 0;
+					obj.row = 0;
+					obj.col = index;
+					obj.TOTALCOL = this.TOTALCOL;
+					obj.MAP_EL_W = this.MAP_EL_W;
+					obj.MAP_EL_H = this.MAP_EL_H;
+					obj.type = this.bullet.get('type');
+					this.bubbleArray[0][index] = new Bubble(obj);
+					this.bubbleContainer.addChild(this.bubbleArray[0][index].el);
+					this.bubbleContainer.removeChild(this.bullet.el);
+					this.bullet = null;
+					this.shoot = false;
+					this.setBullet();
+				}
+
+				this.checkHit();
 			}
-			var l = this.leftGameTime / this.gameTime;
-			if (this.bar.graphics.clear(), this.bar.graphics.beginFill("#fff").drawRect(97, 24, 500 * l, 18), this.addBuCount >= 5 && !this.shoot) {
+			var scaleX = this.leftGameTime / this.gameTime;
+			this.bar.graphics.clear();
+			this.bar.graphics.beginFill("#fff").drawRect(97, 24, 500 * scaleX, 18);
+
+			var buCount;
+			//随机加气泡
+			if (this.addBuCount >= 15 && !this.shoot) {//不能在发射中添加，不然会出错位
 				this.addBuCount = 0;
-				var n = 0;
-				for (a = this.TOTALROW - 2; a >= 0; a--) for (b = 0; b < this.TOTALCOL; b++) {
-					var c = this.bubbleArray[a][b];
-					if (c) for (var o = c.getAroundBub(), p = c.getAroundBubPos(), q = 0; q < o.length; q++) {
-						var r = 1 * Math.random() < .2 ? !0 : !1; ! o[q] && r && 6 > n && (c = {},
-						c.bubbleArray = this.bubbleArray, 0 == p[q][0] % 2 ? (c.x = p[q][1] * this.MAP_EL_W, c.y = p[q][0] * this.MAP_EL_H, c.row = p[q][0], c.col = p[q][1], c.TOTALCOL = this.TOTALCOL, c.MAP_EL_W = this.MAP_EL_W, c.MAP_EL_H = this.MAP_EL_H, this.bubbleArray[p[q][0]][p[q][1]] = new h(c), this.bubbleContainer.addChild(this.bubbleArray[p[q][0]][p[q][1]].el), n++) : p[q][1] == this.TOTALCOL - 1 ? this.bubbleArray[p[q][0]][p[q][1]] = null: (c.x = p[q][1] * this.MAP_EL_W + this.MAP_EL_W / 2, c.y = p[q][0] * this.MAP_EL_H, c.row = p[q][0], c.col = p[q][1], c.TOTALCOL = this.TOTALCOL, c.MAP_EL_W = this.MAP_EL_W, c.MAP_EL_H = this.MAP_EL_H, this.bubbleArray[p[q][0]][p[q][1]] = new h(c), this.bubbleContainer.addChild(this.bubbleArray[p[q][0]][p[q][1]].el), n++)),
-						this.checkGameOver()
+
+				//每次随机最多添加5个
+				var addBub = 0;
+				for (i = this.TOTALROW - 2; i >= 0; i--) {
+					for (j = 0; j < this.TOTALCOL; j++) {
+						var obj = this.bubbleArray[i][j];
+
+						if (obj) {
+							var arr = obj.getAroundBub();
+							var arrRC = obj.getAroundBubPos();
+
+							for (var k = 0; k < arr.length; k++) {
+								var ranAdd = Math.random() * 1 < 0.2 ? true : false;
+								if (!arr[k] && ranAdd && addBub < 6) {
+									obj = {};
+									obj.bubbleArray = this.bubbleArray;
+									if (arrRC[k][0] % 2 == 0) {
+										obj.x = arrRC[k][1] * this.MAP_EL_W;
+										obj.y = arrRC[k][0] * this.MAP_EL_H;
+										obj.row = arrRC[k][0];
+										obj.col = arrRC[k][1];
+										obj.TOTALCOL = this.TOTALCOL;
+										obj.MAP_EL_W = this.MAP_EL_W;
+										obj.MAP_EL_H = this.MAP_EL_H;
+										this.bubbleArray[arrRC[k][0]][arrRC[k][1]] = new Bubble(obj);
+										this.bubbleContainer.addChild(this.bubbleArray[arrRC[k][0]][arrRC[k][1]].el);
+										addBub++;
+									} else {
+										if (arrRC[k][1] == this.TOTALCOL - 1) { //偶行少一个
+											this.bubbleArray[arrRC[k][0]][arrRC[k][1]] = null;
+										} else {
+											obj.x = arrRC[k][1] * this.MAP_EL_W + this.MAP_EL_W / 2;
+											obj.y = arrRC[k][0] * this.MAP_EL_H;
+											obj.row = arrRC[k][0];
+											obj.col = arrRC[k][1];
+											obj.TOTALCOL = this.TOTALCOL;
+											obj.MAP_EL_W = this.MAP_EL_W;
+											obj.MAP_EL_H = this.MAP_EL_H;
+											this.bubbleArray[arrRC[k][0]][arrRC[k][1]] = new Bubble(obj);
+											this.bubbleContainer.addChild(this.bubbleArray[arrRC[k][0]][arrRC[k][1]].el);
+											addBub++;
+										}
+									}
+									//}
+								}
+								this.checkGameOver();
+							}
+						}
+
 					}
 				}
+
 			}
-			this.stage.update()
-		}
+
+			this.stage.update();
+		},
+	}
+
+
+	function progress(event) {
+		var pro = event.loaded / event.total * 100;
+		$(".loading_span").html("Loading " + parseInt(pro) + "%");
+
 	}
 });
