@@ -1,1 +1,7 @@
-{"name":"Puzzle-bubble","tagline":"用createJS写的一个经典泡泡龙小游戏，适配各种移动设备","body":"\r\n#用createJS写的一个经典泡泡龙小游戏，适配各种移动设备\r\n##游戏界面\r\n\r\n![游戏界面](https://raw.githubusercontent.com/haolee1990/Puzzle-Bubble/master/demo.png)\r\n \r\n \r\n代码经过压缩去注释，若需要源码请联系984018099@qq.com","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}
+{
+  "name": "Puzzle-bubble",
+  "tagline": "用createJS写的一个经典泡泡龙小游戏，适配各种移动设备",
+  "body": "\r\n#用createJS写的一个经典泡泡龙小游戏，适配各种移动设备\r\n##游戏界面\r\n\r\n![游戏界面](https://raw.githubusercontent.com/haolee1990/Puzzle-Bubble/master/demo.png)\r\n \r\n \r\n",
+  "google": "",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
