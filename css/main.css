@@ -1,0 +1,145 @@
+/* CSS reset */
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {margin:0; padding:0;}
+html,body{font-size:10px;color:#fff; width:100%; height:100%; background:#1b4e83;}
+input:-moz-placeholder { color: #e60012; }
+::-webkit-input-placeholder { color:#e60012; }
+table {border-collapse:collapse;border-spaceing:0;}
+fieldset,img {border:0; vertical-align:middle}
+address,caption,cite,code,dfn,em,th,var {font-style:normal;font-weight:normal}
+ol,ul {list-style:none}
+/*a,img {
+    -webkit-touch-callout: none; 
+} */
+* {-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-user-select:none; };/**-webkit-user-select:none*/
+a{ text-decoration:none;color:#fff;}
+a:link {color:#fff;}
+a:visited{color:#fff;}
+a,button,input,img { -webkit-tap-highlight-color:rgba(0,0,0,0);}/* 1.去除android a/button/input标签被点击时产生的边框 2.去除ios a标签被点击时产生的半透明灰色背景 */
+
+/*input[type="text"]{color:#fff1af;font-size:24px;background:#1a0000;border-radius:23px; border:1px solid #ffa182; outline:none;padding:8px 20px 5px 20px;}*/
+h1,h2,h3,h4,h5,h6 {font-size:100%;font-weight:normal}
+
+
+.loading{
+	position:absolute; 
+	width:640px;
+	height: 100%;  
+	margin:0 auto; 
+	overflow:hidden;
+	background:#1b4e83;
+	z-index:10000;
+}
+.loading span{
+	position:absolute;
+	left:300px;
+	top:600px;
+	font-size:30px;
+	
+}
+
+.game{
+	width:800px;
+	height:100%;
+	margin: 0 auto;
+	position: relative;
+	background:#1b4e83;	
+}
+.gameContainer{
+	position:absolute;
+	top:0px;
+	width:640;
+	height:100%;
+	background:#1c5c93;
+}
+
+.game1{
+	left:0px;
+	
+}
+.game2{
+	right:0px;	
+}
+.game1 canvas,.game2 canvas{
+	position:absolute;
+	left:0;
+	top:0px;
+	background:#1b4e83;
+}
+
+.playerTxt1{
+	position:absolute;
+	left:878px;
+	top:30px;
+	max-width:130px;
+}
+.playerTxt2{
+	position:absolute;
+	left:1031px;
+	top:30px;
+	max-width:130px;
+}
+.pk{
+	position:absolute;
+	left:945px;
+	top:667px;
+	max-width:153px;
+}
+
+.scaleHalf{
+	-webkit-animation:scaleHalf 0.5s linear 0s 1;
+	-webkit-animation-fill-mode:forwards;	
+}
+
+
+
+@-webkit-keyframes scaleHalf{
+	0%{ -webkit-transform:scale(1,1)}
+	100% { -webkit-transform:scale(0.8,0.8)}	
+}
+
+.score-cont{
+	position: absolute;
+	top: 0;
+	right: 0px;
+	width: 173px;
+	height: 113px;
+	line-height: 113px;
+	background: url(../images/score_bg.png);
+	text-align: center;
+	font-size: 80px;
+	color: #fff;
+	font-weight: bold;
+	opacity: 0.8;
+}
+.score-inner{
+	position: absolute;
+	top: 0;
+	right: 0px;
+	width: 173px;
+	height: 113px;
+	line-height: 113px;
+	text-align: center;
+	font-size: 80px;
+	color: #fff;
+	font-weight: bold;
+}
+.wrong-tips-1{
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	width: 83px;
+	height: 33px;
+	background: url(../images/no.png);
+	bottom: 50px;
+	left: 50px;
+	-webkit-transform: scale(1.15);
+}
+.wrong-tips-2{
+	position: absolute;
+	bottom: 20px;
+	left: 50px;
+	-webkit-transform: scale(1.15);
+	width: 111px;
+	height: 94px;
+	background: url(../images/nod.png);
+}
