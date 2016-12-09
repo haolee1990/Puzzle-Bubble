@@ -69,7 +69,7 @@ $(function() {
 	];
 
 	window.gameOver = function() {
-		window.location.href = '../gameOver.html';
+		window.location.href = '/gameOver.html';
 	}
 
 	//createjs.Sound.alternateExtensions = ["mp3"];
